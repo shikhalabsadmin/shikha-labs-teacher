@@ -10,8 +10,10 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="flex items-center justify-between space-x-2 px-2">
-      <Label htmlFor="theme-mode">Toggle theme</Label>
+    <div className="flex items-center justify-between space-x-2 px-1">
+      <Label htmlFor="theme-mode" className="font-medium">
+        Toggle theme
+      </Label>
       <Switch
         id="theme-mode"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

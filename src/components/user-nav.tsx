@@ -36,6 +36,9 @@ const UserNav = ({ session }: UserNavProps) => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
+        <DropdownMenuLabel>TEACHER</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+
         <DropdownMenuLabel>
           <ThemeToggle />
         </DropdownMenuLabel>
