@@ -1,17 +1,19 @@
 import "./globals.css"
 import { Metadata, Viewport } from "next"
+import { Toaster } from "sonner"
 
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
-import Navbar from "@/components/Navbar"
+import Navbar from "@/components/nav-bar"
+import { SessionProvider } from "@/components/session-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
   title: {
-    default: "Anzar",
-    template: `%s - Anzar`,
+    default: "Shikha Labs Creator",
+    template: `%s - Shikha Labs Creator`,
   },
-  description: "Md Anzar Ahmad is a full stack developer.",
+  description: "Shikha Labs is a great education platform.",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
@@ -41,12 +43,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
             fontSans.variable
           )}
         >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="relative flex min-h-screen flex-col">
-              <Navbar />
-              <div className="flex-1">{children}</div>
-            </div>
-          </ThemeProvider>
+          <SessionProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <div className="relative flex min-h-screen flex-col">
+                <Navbar />
+                <div className="flex-1">{children}</div>
+              </div>
+              <Toaster richColors />
+            </ThemeProvider>
+          </SessionProvider>
         </body>
       </html>
     </>
