@@ -299,7 +299,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
               <div key={index} className="my-4 flex flex-1 gap-3 text-sm">
                 {chat.author === "user" && (
                   <Avatar>
-                    <div className="bg-gray-800 flex h-full w-full items-center justify-center rounded-full border opacity-100">
+                    <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
                       <svg
                         className="w-full rounded-full"
                         stroke="none"
@@ -318,7 +318,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
                   <Avatar>
                     <div
                       className={cn(
-                        "bg-gray-800 flex h-full w-full items-center justify-center rounded-full border opacity-100",
+                        "flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100",
                         isLoading && "animate-pulse"
                       )}
                     >
@@ -352,17 +352,17 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
                 )}
 
                 <div className="leading-relaxed">
-                  <span className="font-semibold block text-base tracking-normal text-primary">
+                  <span className="text-primary block text-base font-semibold tracking-normal">
                     {chat.author === "user" ? "You" : chatbotName}
                   </span>
-                  <div className="text-primary mt-1 rounded-lg bg-muted-foreground/30 px-4 py-1.5 font-medium">
+                  <div className="text-primary bg-muted-foreground/30 mt-1 rounded-lg px-4 py-1.5 font-medium">
                     {chat.message}
                   </div>
                 </div>
               </div>
             ))}
             {isLoading && (
-              <div className="bg-gray-800 inline-block rounded-lg p-2 px-2.5">
+              <div className="inline-block rounded-lg bg-gray-800 p-2 px-2.5">
                 <Grid
                   height={15}
                   width={15}

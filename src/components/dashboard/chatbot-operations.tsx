@@ -53,7 +53,7 @@ export function ChatbotOperations({ id }: any) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive font-medium flex cursor-pointer items-center"
+            className="text-destructive focus:text-destructive flex cursor-pointer items-center font-medium"
             onSelect={() => setShowDeleteAlert(true)}
           >
             Delete

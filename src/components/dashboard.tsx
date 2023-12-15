@@ -17,13 +17,13 @@ const Dashboard = () => {
               <TabsList className="flex flex-col">
                 <TabsTrigger
                   value="chatbots"
-                  className="py-2 px-4 text-lg font-semibold"
+                  className="px-4 py-2 text-lg font-semibold"
                 >
                   Chatbots
                 </TabsTrigger>
                 <TabsTrigger
                   value="responses"
-                  className="py-2 px-4 text-lg font-semibold"
+                  className="px-4 py-2 text-lg font-semibold"
                 >
                   Responses
                 </TabsTrigger>

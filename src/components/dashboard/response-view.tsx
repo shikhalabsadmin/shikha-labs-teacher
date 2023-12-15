@@ -88,7 +88,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                   <div key={index} className="my-4 flex flex-1 gap-3 text-sm">
                     {chat.author === "user" && (
                       <Avatar>
-                        <div className="bg-gray-800 flex h-full w-full items-center justify-center rounded-full border opacity-100">
+                        <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
                           <svg
                             className="w-full rounded-full"
                             stroke="none"
@@ -106,7 +106,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                     {chat.author === "bot" &&
                       !responseDetails.chatbotDetails.imageURL && (
                         <Avatar>
-                          <div className="bg-gray-800 flex h-full w-full items-center justify-center rounded-full border opacity-100">
+                          <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
                             <svg
                               fill="white"
                               xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +138,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                       )}
 
                     <div className="leading-relaxed">
-                      <span className="font-semibold block text-base tracking-normal text-primary">
+                      <span className="text-primary block text-base font-semibold tracking-normal">
                         {chat.author === "user" ? (
                           <>
                             {responseDetails?.studentName
@@ -153,7 +153,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                           </>
                         )}
                       </span>
-                      <div className="text-primary mt-1 rounded-lg bg-muted-foreground/30 px-4 py-1.5 font-medium">
+                      <div className="text-primary bg-muted-foreground/30 mt-1 rounded-lg px-4 py-1.5 font-medium">
                         {chat.message}
                       </div>
                     </div>

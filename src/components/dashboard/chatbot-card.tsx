@@ -53,7 +53,7 @@ export function ChatbotCard({ chatbot }: any) {
                   </DialogHeader>
                   <div className="flex flex-col space-y-4">
                     <div className="w-[475px]">
-                      <p className="mt-2 rounded-md bg-secondary p-4 opacity-90">
+                      <p className="bg-secondary mt-2 rounded-md p-4 opacity-90">
                         <code className="break-words">
                           <span>{shareCode}</span>
                         </code>
@@ -80,7 +80,7 @@ export function ChatbotCard({ chatbot }: any) {
 
         <div className="cursor-pointer sm:flex sm:items-end sm:justify-end">
           <Link href={`/dashboard/chatbot/${chatbot.id}`}>
-            <strong className="bg-primary text-background -mb-[2px] -me-[2px] inline-flex items-center gap-1 rounded-ee-md rounded-ss-md px-3 py-2">
+            <strong className="bg-primary text-background mb-[-2px] me-[-1px] inline-flex items-center gap-1 rounded-ee-md rounded-ss-md px-3 py-2">
               <span className="text-[10px] tracking-wide sm:text-sm">
                 Visit
               </span>

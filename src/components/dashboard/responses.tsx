@@ -29,7 +29,7 @@ const Responses = () => {
     <div className="self-center text-center ">
       <p className="text-left text-3xl font-bold">Chatbot Responses</p>
       {responses.length === 0 && (
-        <div className="mt-3 flex flex-col items-center justify-center rounded-lg bg-accent pb-4">
+        <div className="bg-accent mt-3 flex flex-col items-center justify-center rounded-lg pb-4">
           <Image
             alt="You don't have any student responses yet."
             src="/create.svg"

@@ -41,7 +41,7 @@ export function ResponseCard({ response }: any) {
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false)
   const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false)
 
-  const shareCode = `https://shikha-labs-teacher/dashboard/response/${response.id}`
+  const shareCode = `https://shikha-labs-teacher.vercel.app/dashboard/response/${response.id}`
 
   const deleteResponse = async (responseID: string) => {
     setIsDeleteLoading(true)
@@ -97,7 +97,7 @@ export function ResponseCard({ response }: any) {
                   </DialogHeader>
                   <div className="flex flex-col space-y-4">
                     <div className="w-[475px]">
-                      <p className="mt-2 rounded-md bg-secondary p-4 opacity-90">
+                      <p className="bg-secondary mt-2 rounded-md p-4 opacity-90">
                         <code className="break-words">
                           <span>{shareCode}</span>
                         </code>
@@ -172,7 +172,7 @@ export function ResponseCard({ response }: any) {
 
         <div className="cursor-pointer sm:flex sm:items-end sm:justify-end">
           <Link href={`/dashboard/response/${response.id}`}>
-            <strong className="bg-primary text-background -mb-[2px] -me-[2px] inline-flex items-center gap-1 rounded-ee-md rounded-ss-md px-3 py-2">
+            <strong className="bg-primary text-background mb-[-2px] me-[-1px] inline-flex items-center gap-1 rounded-ee-md rounded-ss-md px-3 py-2">
               <span className="text-[10px] tracking-wide sm:text-sm">Open</span>
               <ExternalLink className="ml-1 h-4 w-4" />
             </strong>
