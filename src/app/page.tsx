@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/config/authOptions"
 import { buttonVariants } from "@/components/ui/button"
+// import AddCreator from "@/components/add-creator"
 import SignInButton from "@/components/sign-in-button"
 
 export default async function IndexPage() {
@@ -15,10 +16,10 @@ export default async function IndexPage() {
           <div className="flex flex-col justify-center space-y-4 text-center">
             <div className="space-y-2">
               <h1 className="bg-gradient-to-r from-white to-gray-900 bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:text-5xl xl:text-6xl/none">
-                Shikha Labs Creator
+                Shikha Labs Teacher
               </h1>
               <p className="mx-auto max-w-[600px] md:text-xl">
-                Create chatbots and help in learning!
+                View chatbots and student responses!
               </p>
             </div>
             <div className="mx-auto w-full max-w-sm space-y-2">
@@ -30,6 +31,7 @@ export default async function IndexPage() {
                 <SignInButton />
               )}
             </div>
+            {/* {session && <AddCreator session={session} />} */}
           </div>
         </div>
       </div>

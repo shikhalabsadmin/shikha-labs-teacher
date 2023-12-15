@@ -27,7 +27,6 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
 
   useEffect(() => {
     const getResponseDetails = async () => {
-      const storedData = sessionStorage.getItem(`ResponseOfID~${responseid}`)
       try {
         const docRef = doc(db, "responses", responseid)
 

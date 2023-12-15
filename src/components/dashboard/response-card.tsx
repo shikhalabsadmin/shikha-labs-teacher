@@ -41,7 +41,7 @@ export function ResponseCard({ response }: any) {
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false)
   const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false)
 
-  const shareCode = `http://localhost:3000/dashboard/response/${response.id}`
+  const shareCode = `https://shikha-labs-teacher/dashboard/response/${response.id}`
 
   const deleteResponse = async (responseID: string) => {
     setIsDeleteLoading(true)
@@ -77,6 +77,9 @@ export function ResponseCard({ response }: any) {
             </p>
             <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
               {response.chatbotDetails?.description}
+            </p>
+            <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
+              {response.createdAt}
             </p>
 
             <div className="mt-5 flex gap-5">

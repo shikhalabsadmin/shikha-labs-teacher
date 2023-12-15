@@ -34,6 +34,9 @@ export function ChatbotCard({ chatbot }: any) {
             <p className="text-muted-foreground mt-1 text-base/relaxed leading-5 tracking-tight">
               {chatbot.description}
             </p>
+            {/* <p className="text-muted-foreground mt-1 text-base/relaxed leading-5 tracking-tight">
+              {chatbot.createdAt}
+            </p> */}
 
             <div className="mt-5 flex gap-5">
               <Dialog>
