@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { doc, getDoc } from "firebase/firestore"
+import { doc } from "firebase/firestore"
+import { useDocumentData } from "react-firebase-hooks/firestore"
 
 import { db } from "@/config/firebase"
 import { Avatar } from "@/components/ui/avatar"
@@ -21,35 +21,9 @@ interface ResponseViewProps {
 }
 
 export default function ResponseView({ responseid }: ResponseViewProps) {
-  const [responseDetails, setResponseDetails] = useState<any>([])
-
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const getResponseDetails = async () => {
-      try {
-        const docRef = doc(db, "responses", responseid)
-
-        const docSnap = await getDoc(docRef)
-
-        if (docSnap.exists()) {
-          setResponseDetails(docSnap.data())
-        } else {
-          console.log("No such document!")
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    if (responseid) {
-      setLoading(true)
-      getResponseDetails()
-      setTimeout(() => {
-        setLoading(false)
-      }, 2000)
-    }
-  }, [responseid])
+  const [responseDetails, loading] = useDocumentData(
+    doc(db, "responses", responseid)
+  )
 
   if (loading) return <Loader />
 
@@ -84,7 +58,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
             </CardHeader>
             <CardContent>
               <div className="h-[55vh] w-full overflow-y-auto pr-4">
-                {responseDetails.chats.map((chat: any, index: any) => (
+                {responseDetails?.chats?.map((chat: any, index: any) => (
                   <div key={index} className="my-4 flex flex-1 gap-3 text-sm">
                     {chat.author === "user" && (
                       <Avatar>
@@ -104,7 +78,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                       </Avatar>
                     )}
                     {chat.author === "bot" &&
-                      !responseDetails.chatbotDetails.imageURL && (
+                      !responseDetails?.chatbotDetails.imageURL && (
                         <Avatar>
                           <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
                             <svg
@@ -123,7 +97,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                         </Avatar>
                       )}
                     {chat.author === "bot" &&
-                      responseDetails.chatbotDetails.imageURL && (
+                      responseDetails?.chatbotDetails.imageURL && (
                         <Avatar className="h-10 w-10">
                           <div className="flex h-full w-full items-center justify-center rounded-full border">
                             <Image
@@ -147,7 +121,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                           </>
                         ) : (
                           <>
-                            {responseDetails.chatbotDetails.chatbotName
+                            {responseDetails?.chatbotDetails.chatbotName
                               ? responseDetails.chatbotDetails.chatbotName
                               : "Shikha AI"}
                           </>
@@ -176,7 +150,9 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
             </CardHeader>
             <CardContent className="pr-1">
               <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
-                {responseDetails?.convoRating}
+                {responseDetails?.convoRating
+                  ? responseDetails?.convoRating
+                  : "The student did not rate the conversation."}
               </div>
             </CardContent>
           </Card>

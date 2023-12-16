@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/config/authOptions"
 import { buttonVariants } from "@/components/ui/button"
-// import AddCreator from "@/components/add-creator"
 import SignInButton from "@/components/sign-in-button"
 
 export default async function IndexPage() {
@@ -31,7 +30,6 @@ export default async function IndexPage() {
                 <SignInButton />
               )}
             </div>
-            {/* {session && <AddCreator session={session} />} */}
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { deleteDoc, doc } from "firebase/firestore"
+import { DocumentData, deleteDoc, doc } from "firebase/firestore"
 import { ExternalLink, Loader, MoreVertical, Trash } from "lucide-react"
 import { toast } from "sonner"
 
@@ -37,49 +37,64 @@ async function copyToClipboard(value: string, meta?: Record<string, unknown>) {
   navigator.clipboard.writeText(value)
 }
 
-export function ResponseCard({ response }: any) {
-  const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false)
-  const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false)
+interface ResponseCardProps {
+  response: DocumentData
+  id: string
+}
 
-  const shareCode = `https://shikha-labs-teacher.vercel.app/dashboard/response/${response.id}`
+export function ResponseCard({ response, id }: ResponseCardProps) {
+  // const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false)
+  // const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false)
 
-  const deleteResponse = async (responseID: string) => {
-    setIsDeleteLoading(true)
-    try {
-      await deleteDoc(doc(db, "responses", responseID))
+  const shareCode = `https://shikha-labs-teacher.vercel.app/dashboard/response/${id}`
 
-      setIsDeleteLoading(false)
-      setShowDeleteAlert(false)
-      toast.success("Response deleted successfully!")
-      window.location.reload()
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.")
-    }
-  }
+  // const deleteResponse = async (responseID: string) => {
+  //   setIsDeleteLoading(true)
+  //   try {
+  //     await deleteDoc(doc(db, "responses", responseID))
+
+  //     setIsDeleteLoading(false)
+  //     setShowDeleteAlert(false)
+  //     toast.success("Response deleted successfully!")
+  //     window.location.reload()
+  //   } catch (error) {
+  //     toast.error("Something went wrong. Please try again.")
+  //   }
+  // }
+
+  const date = new Date(response?.createdAt?.toDate())
+
+  const userTimezoneOffset = date.getTimezoneOffset() * 60000
+
+  const userDate = new Date(date.getTime() + userTimezoneOffset)
+
+  const formattedDate = userDate.toLocaleDateString("en-gb", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })
 
   return (
     <article className="border-primary/80 flex rounded-md border-2 border-dashed">
+      <div className="rotate-180 p-4 [writing-mode:_vertical-lr]">
+        <time className="flex items-center justify-between gap-2 text-xs font-bold text-primary/50">
+          <span className="w-px flex-1 bg-primary/20"></span>
+          <span>{formattedDate}</span>
+          <span className="w-px flex-1 bg-primary/20"></span>
+        </time>
+      </div>
       <div className="flex flex-1 flex-col justify-between">
-        <div className="border-primary/10 grid grid-flow-col-dense grid-cols-3 border-l p-4 pb-0 text-left sm:border-l-transparent sm:p-6 sm:pb-0">
-          <div className="col-span-2">
+        <div className="border-primary/10 grid grid-flow-col-dense grid-cols-4 border-l p-4 pb-0 text-left sm:border-l-transparent sm:px-4 sm:py-6 sm:pb-0">
+          <div className="col-span-2 pr-3">
             <h2 className="text-xl font-bold capitalize sm:text-2xl">
               {response?.studentName}
             </h2>
 
             <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
-              Roll No. {response.studentRollno}
+              Roll No. {response?.studentRollno}
             </p>
             <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
-              {response.studentGrade}
-            </p>
-            <p className="text-primary/80 mt-2 text-base/relaxed font-semibold leading-5 tracking-tight">
-              {response.chatbotDetails?.chatbotName}
-            </p>
-            <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
-              {response.chatbotDetails?.description}
-            </p>
-            <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
-              {response.createdAt}
+              {response?.studentGrade}
             </p>
 
             <div className="mt-5 flex gap-5">
@@ -117,7 +132,7 @@ export function ResponseCard({ response }: any) {
               </Dialog>
             </div>
           </div>
-          <div className="col-span-1">
+          {/* <div className="col-span-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -167,11 +182,20 @@ export function ResponseCard({ response }: any) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+          </div> */}
+
+          <div className="col-span-2">
+            <p className="text-primary/80 mt-1 text-lg font-bold leading-5 tracking-tight">
+              {response?.chatbotDetails?.chatbotName}
+            </p>
+            <p className="text-muted-foreground mt-1 text-base/relaxed font-medium leading-5 tracking-tight">
+              {response?.chatbotDetails?.description}
+            </p>
           </div>
         </div>
 
         <div className="cursor-pointer sm:flex sm:items-end sm:justify-end">
-          <Link href={`/dashboard/response/${response.id}`}>
+          <Link href={`/dashboard/response/${id}`}>
             <strong className="bg-primary text-background mb-[-2px] me-[-1px] inline-flex items-center gap-1 rounded-ee-md rounded-ss-md px-3 py-2">
               <span className="text-[10px] tracking-wide sm:text-sm">Open</span>
               <ExternalLink className="ml-1 h-4 w-4" />

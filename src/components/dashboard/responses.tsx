@@ -1,34 +1,23 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Image from "next/image"
-import { collection, getDocs } from "firebase/firestore"
+import { collection, orderBy, query } from "firebase/firestore"
+import { Loader } from "lucide-react"
+import { useCollection } from "react-firebase-hooks/firestore"
 
 import { db } from "@/config/firebase"
 
 import { ResponseCard } from "./response-card"
 
 const Responses = () => {
-  const [responses, setResponses] = useState<any>([])
-
-  const fetchResponses = async () => {
-    const querySnapshot = await getDocs(collection(db, "responses"))
-    let itemsArr: { id: string }[] = []
-
-    querySnapshot.forEach((doc) => {
-      itemsArr.push({ ...doc.data(), id: doc.id })
-    })
-    setResponses(itemsArr)
-  }
-
-  useEffect(() => {
-    fetchResponses()
-  }, [])
+  const [responses, loading] = useCollection(
+    query(collection(db, "responses"), orderBy("createdAt", "desc"))
+  )
 
   return (
     <div className="self-center text-center ">
       <p className="text-left text-3xl font-bold">Chatbot Responses</p>
-      {responses.length === 0 && (
+      {responses?.empty && (
         <div className="bg-accent mt-3 flex flex-col items-center justify-center rounded-lg pb-4">
           <Image
             alt="You don't have any student responses yet."
@@ -43,9 +32,18 @@ const Responses = () => {
           </p>
         </div>
       )}
+      {loading && (
+        <div className="flex justify-center h-[65vh] items-center">
+          <Loader strokeWidth="3px" className="w-16 h-16 animate-spin" />
+        </div>
+      )}
       <ul className="mx-auto mt-5 grid max-w-2xl grid-cols-2 gap-6 lg:mx-0 lg:max-w-none lg:gap-8">
-        {responses.map((response: any) => (
-          <ResponseCard key={response.id} response={response} />
+        {responses?.docs.map((response) => (
+          <ResponseCard
+            key={response.id}
+            id={response.id}
+            response={response.data()}
+          />
         ))}
       </ul>
     </div>

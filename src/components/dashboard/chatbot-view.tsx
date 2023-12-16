@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { doc, getDoc } from "firebase/firestore"
+import { doc } from "firebase/firestore"
+import { useDocumentData } from "react-firebase-hooks/firestore"
 import { Grid } from "react-loader-spinner"
 
 import { db } from "@/config/firebase"
@@ -21,17 +22,6 @@ import {
 import { Input } from "@/components/ui/input"
 import Loader from "@/components/loader"
 
-interface ChatbotProps {
-  imageURL: string
-  chatbotName: string
-  welcomeMessage: string
-  description: string
-  namespace: string
-  indexName: string
-  tags: string
-  prompt: string
-}
-
 interface Chat {
   message: string
   author: string
@@ -42,50 +32,18 @@ interface ChatbotViewProps {
 }
 
 export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
-  const [chatbotDetails, setChatbotDetails] = useState<any>({} as ChatbotProps)
-  const [isLoadingData, setIsLoadingData] = useState(true)
-  const [loading, setLoading] = useState(true)
+  const [chatbotDetails, loading] = useDocumentData(
+    doc(db, "chatbots", chatbotid)
+  )
 
-  useEffect(() => {
-    const getChatbotDetails = async () => {
-      try {
-        const docRef = doc(db, "chatbots", chatbotid)
-
-        const docSnap = await getDoc(docRef)
-
-        if (docSnap.exists()) {
-          setChatbotDetails(docSnap.data())
-          setIsLoadingData(false)
-        } else {
-          console.log("No such document!")
-        }
-      } catch (error) {
-        console.log(error)
-        setIsLoadingData(false)
-      }
-    }
-
-    if (chatbotid) {
-      setLoading(true)
-      getChatbotDetails()
-      setTimeout(() => {
-        setLoading(false)
-      }, 2000)
-    }
-  }, [chatbotid])
-
-  const {
-    imageURL,
-    chatbotName,
-    welcomeMessage,
-    description,
-    namespace,
-    indexName,
-    tags,
-    prompt,
-  }: ChatbotProps = {
-    ...chatbotDetails,
-  }
+  const imageURL = chatbotDetails?.imageURL
+  const chatbotName = chatbotDetails?.chatbotName
+  const welcomeMessage = chatbotDetails?.welcomeMessage
+  const namespace = chatbotDetails?.namespace
+  const indexName = chatbotDetails?.indexName
+  const prompt = chatbotDetails?.prompt
+  const description = chatbotDetails?.description
+  const tags = chatbotDetails?.tags
 
   const [input, setInput] = useState("")
   const [chats, setChats] = useState<Chat[]>([
