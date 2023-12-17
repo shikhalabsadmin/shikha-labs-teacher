@@ -77,10 +77,10 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
   return (
     <article className="border-primary/80 flex rounded-md border-2 border-dashed">
       <div className="rotate-180 p-4 [writing-mode:_vertical-lr]">
-        <time className="flex items-center justify-between gap-2 text-xs font-bold text-primary/50">
-          <span className="w-px flex-1 bg-primary/20"></span>
+        <time className="text-primary/50 flex items-center justify-between gap-2 text-xs font-bold">
+          <span className="bg-primary/20 w-px flex-1"></span>
           <span>{formattedDate}</span>
-          <span className="w-px flex-1 bg-primary/20"></span>
+          <span className="bg-primary/20 w-px flex-1"></span>
         </time>
       </div>
       <div className="flex flex-1 flex-col justify-between">

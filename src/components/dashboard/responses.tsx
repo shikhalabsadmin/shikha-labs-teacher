@@ -33,8 +33,8 @@ const Responses = () => {
         </div>
       )}
       {loading && (
-        <div className="flex justify-center h-[65vh] items-center">
-          <Loader strokeWidth="3px" className="w-16 h-16 animate-spin" />
+        <div className="flex h-[65vh] items-center justify-center">
+          <Loader strokeWidth="3px" className="h-16 w-16 animate-spin" />
         </div>
       )}
       <ul className="mx-auto mt-5 grid max-w-2xl grid-cols-2 gap-6 lg:mx-0 lg:max-w-none lg:gap-8">

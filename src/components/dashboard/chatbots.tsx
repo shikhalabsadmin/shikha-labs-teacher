@@ -33,6 +33,15 @@ import { useCollection } from "react-firebase-hooks/firestore"
 import { db } from "@/config/firebase"
 import { Button } from "@/components/ui/button"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -46,7 +55,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { ChatbotCard } from "@/components/dashboard/chatbot-card"
+
+import { Separator } from "../ui/separator"
 
 const grades = [
   "Grade 1",
@@ -68,142 +84,126 @@ const subjects = [
   "Mathematics",
   "Science",
   "Social Science",
-  "",
 ]
 
 const Chatbots = () => {
-  const [grade, setGrade] = useState<string>("")
-  const [subject, setSubject] = useState<string>("")
-
-  // const [loading, setLoading] = useState<boolean>(true)
+  const [selectedGrades, setSelectedGrades] = useState<any>([])
+  const [selectedSubjects, setSelectedSubjects] = useState<any>([])
 
   const [chatbots, loading] = useCollection(
-    query(
-      collection(db, "chatbots"),
-      // or(and(where("grade", "==", grade), and(where("subject", "==", subject))))
-      orderBy("createdAt", "desc")
-    )
+    query(collection(db, "chatbots"), orderBy("createdAt", "desc"))
   )
 
-  // const [chatbots, setChatbots] = useState<any>([])
-
-  // const fetchChatbots = async () => {
-  //   try {
-  //     if (subject) {
-  //       const querySnapshot = await getDocs(
-  //         query(
-  //           collection(db, "chatbots"),
-  //           where("subject", "==", subject)
-  //           // orderBy("createdAt", "desc")
-  //         )
-  //       )
-  //       let itemsArr: { id: string }[] = []
-
-  //       querySnapshot.forEach((doc) => {
-  //         itemsArr.push({ ...doc.data(), id: doc.id })
-  //       })
-  //       setChatbots(itemsArr)
-  //       setLoading(false)
-  //     } else if (grade) {
-  //       const querySnapshot = await getDocs(
-  //         query(
-  //           collection(db, "chatbots"),
-  //           where("grade", "==", grade)
-  //           // orderBy("createdAt", "desc")
-  //         )
-  //       )
-  //       let itemsArr: { id: string }[] = []
-
-  //       querySnapshot.forEach((doc) => {
-  //         itemsArr.push({ ...doc.data(), id: doc.id })
-  //       })
-  //       setChatbots(itemsArr)
-  //       setLoading(false)
-  //     } else if (subject && grade) {
-  //       const querySnapshot = await getDocs(
-  //         query(
-  //           collection(db, "chatbots"),
-  //           where("subject", "==", subject),
-  //           where("subject", "==", subject)
-  //           // orderBy("createdAt", "desc")
-  //         )
-  //       )
-  //       let itemsArr: { id: string }[] = []
-
-  //       querySnapshot.forEach((doc) => {
-  //         itemsArr.push({ ...doc.data(), id: doc.id })
-  //       })
-  //       setChatbots(itemsArr)
-  //       setLoading(false)
-  //     } else {
-  //       const querySnapshot = await getDocs(
-  //         query(collection(db, "chatbots"), orderBy("createdAt", "desc"))
-  //       )
-  //       let itemsArr: { id: string }[] = []
-
-  //       querySnapshot.forEach((doc) => {
-  //         itemsArr.push({ ...doc.data(), id: doc.id })
-  //       })
-  //       setChatbots(itemsArr)
-  //       setLoading(false)
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //     setLoading(false)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchChatbots()
-  // }, [subject, grade])
-
-  console.log("chatbots: ", chatbots)
+  const filteredChatbots = chatbots?.docs?.filter((chatbot: DocumentData) => {
+    const data = chatbot.data()
+    if (selectedGrades.length > 0 && selectedSubjects.length > 0) {
+      return (
+        selectedGrades.includes(data.grade) &&
+        selectedSubjects.includes(data.subject)
+      )
+    } else if (selectedGrades.length > 0) {
+      return selectedGrades.includes(data.grade)
+    } else if (selectedSubjects.length > 0) {
+      return selectedSubjects.includes(data.subject)
+    }
+    return true
+  })
 
   return (
     <div className="self-center text-center">
-      <div className="flex flex-col justify-between items-center px-2">
-        <div className="text-3xl font-bold self-start">Chatbot Apps</div>
+      <div className="flex flex-col items-center justify-between px-2">
+        <div className="self-start text-3xl font-bold">Chatbot Apps</div>
 
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild className="self-end">
+        <Popover>
+          <PopoverTrigger asChild className="self-end">
             <Button variant="outline" className="text-lg">
               Filter
-              <Filter className="w-5 h-5 ml-2" />
+              <Filter className="ml-2 h-5 w-5" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-80 mr-8">
-            <DropdownMenuLabel className="text-center">
+          </PopoverTrigger>
+          <PopoverContent className="mr-8 w-[30rem]">
+            <h1 className="pb-2 text-center text-xl font-bold">
               Filter Chatbots
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            </h1>
+            <Separator />
             <div className="inline-flex w-full justify-between p-4">
-              <DropdownMenuGroup className="w-[45%]">
-                <DropdownMenuLabel className="text-center underline">
+              <div className="w-[50%] border-r">
+                <h2 className="pb-2 text-center text-lg font-medium underline">
                   Grade
-                </DropdownMenuLabel>
-                {grades.map((gradeValue: string) => (
-                  <DropdownMenuItem onClick={() => setGrade(gradeValue)}>
-                    {gradeValue}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
+                </h2>
+                <ul className="mr-2">
+                  {grades.map((gradeValue: string, index: number) => (
+                    <li
+                      key={index}
+                      onClick={() => {
+                        if (selectedGrades.includes(gradeValue)) {
+                          setSelectedGrades(
+                            selectedGrades.filter(
+                              (g: string) => g !== gradeValue
+                            )
+                          )
+                        } else {
+                          setSelectedGrades([...selectedGrades, gradeValue])
+                        }
+                      }}
+                      className="hover:bg-secondary flex cursor-pointer items-center justify-between rounded-md px-4 py-1"
+                    >
+                      <p>{gradeValue}</p>
+                      {selectedGrades.includes(gradeValue) && <p>✔️</p>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-              <DropdownMenuGroup className="border-l w-[45%] pl-2">
-                <DropdownMenuLabel className="text-center underline">
+              <div className="w-[50%] pl-2">
+                <h2 className="pb-2 text-center text-lg font-medium underline">
                   Subject
-                </DropdownMenuLabel>
-                {subjects.map((subjectValue: string) => (
-                  <DropdownMenuItem onClick={() => setSubject(subjectValue)}>
-                    {subjectValue}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
+                </h2>
+                <ul>
+                  {subjects.map((subjectValue: string, index: number) => (
+                    <li
+                      key={index}
+                      onClick={() => {
+                        if (selectedSubjects.includes(subjectValue)) {
+                          setSelectedSubjects(
+                            selectedSubjects.filter(
+                              (s: string) => s !== subjectValue
+                            )
+                          )
+                        } else {
+                          setSelectedSubjects([
+                            ...selectedSubjects,
+                            subjectValue,
+                          ])
+                        }
+                      }}
+                      className="hover:bg-secondary flex cursor-pointer items-center justify-between rounded-md px-4 py-1"
+                    >
+                      <p>{subjectValue}</p>
+                      {selectedSubjects.includes(subjectValue) && <p>✔️</p>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </DropdownMenuContent>
-        </DropdownMenu> */}
+            <Separator />
+            <div className="flex pt-2">
+              <Button
+                variant="outline"
+                className="mx-auto h-8"
+                onClick={() => {
+                  setSelectedGrades([])
+                  setSelectedSubjects([])
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
-      {chatbots?.empty && (
+      {filteredChatbots?.length === 0 && (
         <div className="bg-accent mt-3 flex flex-col items-center justify-center rounded-lg pb-4">
           <Image
             alt="You don't have any chatbots yet."
@@ -220,13 +220,13 @@ const Chatbots = () => {
       )}
 
       {loading && (
-        <div className="flex justify-center h-[65vh] items-center">
-          <Loader strokeWidth="3px" className="w-16 h-16 animate-spin" />
+        <div className="flex h-[65vh] items-center justify-center">
+          <Loader strokeWidth="3px" className="h-16 w-16 animate-spin" />
         </div>
       )}
 
       <ul className="mx-auto mt-5 grid max-w-2xl grid-cols-2 gap-6 lg:mx-0 lg:max-w-none lg:gap-8">
-        {chatbots?.docs?.map((chatbot: DocumentData) => (
+        {filteredChatbots?.map((chatbot: DocumentData) => (
           <ChatbotCard
             key={chatbot.id}
             id={chatbot.id}
