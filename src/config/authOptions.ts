@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
     async signIn(params) {
       try {
         const { user } = params
-        const userDocRef = doc(db, "creators", user.id)
+        const userDocRef = doc(db, "teachers", user.id)
         const userDoc = await getDoc(userDocRef)
 
         if (!userDoc.exists()) {
