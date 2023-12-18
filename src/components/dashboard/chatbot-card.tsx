@@ -26,7 +26,7 @@ interface ChatbotCardProps {
 }
 
 export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
-  const shareCode = `https://shikha-build-studio-students-chatbot.vercel.app/${id}`
+  const shareCode = `https://shikha-labs-students.vercel.app/${id}`
 
   const date = new Date(chatbot?.createdAt?.toDate())
 

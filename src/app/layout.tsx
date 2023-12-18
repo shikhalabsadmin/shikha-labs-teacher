@@ -10,8 +10,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
   title: {
-    default: "Shikha Labs Creator",
-    template: `%s - Shikha Labs Creator`,
+    default: "Shikha Labs Teacher",
+    template: `%s - Shikha Labs Teacher`,
   },
   description: "Shikha Labs is a great education platform.",
   icons: {

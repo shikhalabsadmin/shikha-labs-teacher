@@ -4,8 +4,10 @@ import React, { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { doc } from "firebase/firestore"
+import { Loader2 } from "lucide-react"
 import { useDocumentData } from "react-firebase-hooks/firestore"
 import { Grid } from "react-loader-spinner"
+import { toast } from "sonner"
 
 import { db } from "@/config/firebase"
 import { cn } from "@/lib/utils"
@@ -22,11 +24,21 @@ import {
 import { Input } from "@/components/ui/input"
 import Loader from "@/components/loader"
 
-interface Chat {
-  message: string
-  author: string
+interface ChatbotProps {
+  imageURL: string
+  chatbotName: string
+  welcomeMessage: string
+  description: string
+  namespace: string
+  indexName: string
+  tags: string
+  prompt: string
 }
 
+interface Chat {
+  role: string
+  content: string
+}
 interface ChatbotViewProps {
   chatbotid: string
 }
@@ -42,17 +54,15 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
   const namespace = chatbotDetails?.namespace
   const indexName = chatbotDetails?.indexName
   const prompt = chatbotDetails?.prompt
-  const description = chatbotDetails?.description
-  const tags = chatbotDetails?.tags
 
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState<string>("")
   const [chats, setChats] = useState<Chat[]>([
-    { message: welcomeMessage, author: "bot" },
+    { role: "assistant", content: welcomeMessage },
   ])
-  const [questions, setQuestions] = useState("")
-  const [answer, setAnswer] = useState("")
+  const [questions, setQuestions] = useState<string>("")
+  const [answer, setAnswer] = useState<string>("")
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const scrollAreaRef = useRef<null | HTMLDivElement>(null)
 
@@ -66,7 +76,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
   }, [chats])
 
   useEffect(() => {
-    setChats([{ message: welcomeMessage, author: "bot" }])
+    setChats([{ role: "assistant", content: welcomeMessage }])
   }, [welcomeMessage])
 
   const handlePromptSubmit = async (
@@ -75,8 +85,8 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
     event.preventDefault()
 
     const currentChat = {
-      message: input,
-      author: "user",
+      role: "user",
+      content: input,
     }
 
     let conversationHistory: Chat[] = []
@@ -98,13 +108,9 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
       ]
     }
 
-    const conversationString = conversationHistory
-      .map((chat) => `${chat.message}`)
-      .join("\n\n")
+    console.log("conversationHistory", conversationHistory)
 
-    console.log(conversationString)
-
-    setChats([...chats, { message: input, author: "user" }])
+    setChats([...chats, { role: "user", content: input }])
     setIsLoading(true)
 
     const response = await fetch("/api/conversation", {
@@ -112,7 +118,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt, input: conversationString }),
+      body: JSON.stringify({ prompt, input: conversationHistory }),
     })
 
     const data = response.body
@@ -124,11 +130,11 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
     if (!response.ok) {
       setChats([
         ...chats,
-        { message: input, author: "user" },
+        { role: "user", content: input },
         {
-          message:
+          role: "assistant",
+          content:
             "Sorry, We ran into an error. Please refresh the page and try again.",
-          author: "bot",
         },
       ])
       setInput("")
@@ -149,12 +155,12 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
       setChats([
         ...chats,
         {
-          message: input,
-          author: "user",
+          role: "user",
+          content: input,
         },
         {
-          message: output as string,
-          author: "bot",
+          role: "assistant",
+          content: output as string,
         },
       ])
     }
@@ -180,7 +186,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
 
     const response = handleQuestions()
     setQuestions(response)
-    setChats([...chats, { message: input, author: "user" }])
+    setChats([...chats, { role: "user", content: input }])
     setIsLoading(true)
 
     const res = await fetch(
@@ -195,12 +201,12 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
     setChats([
       ...chats,
       {
-        message: input,
-        author: "user",
+        role: "user",
+        content: input,
       },
       {
-        message: Answer,
-        author: "bot",
+        role: "assistant",
+        content: Answer,
       },
     ])
     setInput("")
@@ -217,11 +223,11 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
     if (!res.ok) {
       setChats([
         ...chats,
-        { message: input, author: "user" },
+        { role: "user", content: input },
         {
-          message:
+          role: "assistant",
+          content:
             "Sorry, Your document is not in the index. Please upload a new document.",
-          author: "bot",
         },
       ])
       setInput("")
@@ -255,7 +261,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
           >
             {chats.map((chat, index) => (
               <div key={index} className="my-4 flex flex-1 gap-3 text-sm">
-                {chat.author === "user" && (
+                {chat.role === "user" && (
                   <Avatar>
                     <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
                       <svg
@@ -272,7 +278,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
                     </div>
                   </Avatar>
                 )}
-                {chat.author === "bot" && !imageURL && (
+                {chat.role === "assistant" && !imageURL && (
                   <Avatar>
                     <div
                       className={cn(
@@ -295,7 +301,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
                     </div>
                   </Avatar>
                 )}
-                {chat.author === "bot" && imageURL && (
+                {chat.role === "assistant" && imageURL && (
                   <Avatar className="h-10 w-10">
                     <div className="flex h-full w-full items-center justify-center rounded-full border">
                       <Image
@@ -311,10 +317,10 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
 
                 <div className="leading-relaxed">
                   <span className="text-primary block text-base font-semibold tracking-normal">
-                    {chat.author === "user" ? "You" : chatbotName}
+                    {chat.role === "user" ? "You" : chatbotName}
                   </span>
                   <div className="text-primary bg-muted-foreground/30 mt-1 rounded-lg px-4 py-1.5 font-medium">
-                    {chat.message}
+                    {chat.content}
                   </div>
                 </div>
               </div>

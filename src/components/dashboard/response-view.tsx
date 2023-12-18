@@ -60,7 +60,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
               <div className="h-[55vh] w-full overflow-y-auto pr-4">
                 {responseDetails?.chats?.map((chat: any, index: any) => (
                   <div key={index} className="my-4 flex flex-1 gap-3 text-sm">
-                    {chat.author === "user" && (
+                    {chat.role === "user" && (
                       <Avatar>
                         <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
                           <svg
@@ -77,7 +77,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                         </div>
                       </Avatar>
                     )}
-                    {chat.author === "bot" &&
+                    {chat.role === "assistant" &&
                       !responseDetails?.chatbotDetails.imageURL && (
                         <Avatar>
                           <div className="flex h-full w-full items-center justify-center rounded-full border bg-gray-800 opacity-100">
@@ -96,7 +96,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                           </div>
                         </Avatar>
                       )}
-                    {chat.author === "bot" &&
+                    {chat.role === "assistant" &&
                       responseDetails?.chatbotDetails.imageURL && (
                         <Avatar className="h-10 w-10">
                           <div className="flex h-full w-full items-center justify-center rounded-full border">
@@ -113,7 +113,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
 
                     <div className="leading-relaxed">
                       <span className="text-primary block text-base font-semibold tracking-normal">
-                        {chat.author === "user" ? (
+                        {chat.role === "user" ? (
                           <>
                             {responseDetails?.studentName
                               ? responseDetails?.studentName
@@ -128,7 +128,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                         )}
                       </span>
                       <div className="text-primary bg-muted-foreground/30 mt-1 rounded-lg px-4 py-1.5 font-medium">
-                        {chat.message}
+                        {chat.content}
                       </div>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
               <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
                 {responseDetails?.convoRating
                   ? responseDetails?.convoRating
-                  : "The student did not rate the conversation."}
+                  : "The rating is not available."}
               </div>
             </CardContent>
           </Card>
