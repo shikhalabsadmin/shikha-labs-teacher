@@ -36,7 +36,7 @@ interface ChatbotProps {
 }
 
 interface Chat {
-  role: string
+  role: "user" | "assistant"
   content: string
 }
 interface ChatbotViewProps {
@@ -84,7 +84,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
   ) => {
     event.preventDefault()
 
-    const currentChat = {
+    const currentChat: Chat = {
       role: "user",
       content: input,
     }
@@ -108,7 +108,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
       ]
     }
 
-    console.log("conversationHistory", conversationHistory)
+    // console.log("conversationHistory", conversationHistory)
 
     setChats([...chats, { role: "user", content: input }])
     setIsLoading(true)
