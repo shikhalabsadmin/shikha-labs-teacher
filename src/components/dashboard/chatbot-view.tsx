@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import Loader from "@/components/loader"
+import MarkdownComponent from "@/components/markdown-component"
 
 interface ChatbotProps {
   imageURL: string
@@ -107,8 +108,6 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
         currentChat,
       ]
     }
-
-    // console.log("conversationHistory", conversationHistory)
 
     setChats([...chats, { role: "user", content: input }])
     setIsLoading(true)
@@ -320,7 +319,7 @@ export default function ChatbotView({ chatbotid }: ChatbotViewProps) {
                     {chat.role === "user" ? "You" : chatbotName}
                   </span>
                   <div className="text-primary bg-muted-foreground/30 mt-1 rounded-lg px-4 py-1.5 font-medium">
-                    {chat.content}
+                    <MarkdownComponent content={chat.content} />
                   </div>
                 </div>
               </div>

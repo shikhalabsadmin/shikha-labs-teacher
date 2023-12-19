@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/card"
 import Loader from "@/components/loader"
 
+import MarkdownComponent from "../markdown-component"
+
 interface ResponseViewProps {
   responseid: string
 }
@@ -128,7 +130,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                         )}
                       </span>
                       <div className="text-primary bg-muted-foreground/30 mt-1 rounded-lg px-4 py-1.5 font-medium">
-                        {chat.content}
+                        <MarkdownComponent content={chat.content} />
                       </div>
                     </div>
                   </div>
@@ -150,9 +152,11 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
             </CardHeader>
             <CardContent className="pr-1">
               <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
-                {responseDetails?.convoRating
-                  ? responseDetails?.convoRating
-                  : "The rating is not available."}
+                {responseDetails?.convoRating ? (
+                  <MarkdownComponent content={responseDetails?.convoRating} />
+                ) : (
+                  "The rating is not available."
+                )}
               </div>
             </CardContent>
           </Card>
