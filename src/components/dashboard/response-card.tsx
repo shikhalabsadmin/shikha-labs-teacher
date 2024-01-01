@@ -46,7 +46,7 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
   // const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false)
   // const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false)
 
-  const shareCode = `https://shikha-labs-teacher.vercel.app/dashboard/response/${id}`
+  const [studentRating, setStudentRating] = useState<string>("")
 
   // const deleteResponse = async (responseID: string) => {
   //   setIsDeleteLoading(true)
@@ -100,25 +100,50 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
             <div className="mt-5 flex gap-5">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button>Share</Button>
+                  <Button>View Rating</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[525px]">
+                <DialogContent className="sm:max-w-[625px]">
                   <DialogHeader>
-                    <DialogTitle>Share Response</DialogTitle>
+                    <DialogTitle>Student Conversation Rating</DialogTitle>
                     <DialogDescription>
-                      Copy the code below to share the response with the other
-                      teachers.
+                      Here is the rating based on how well the student conversed
+                      with the chatbot.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex flex-col space-y-4">
-                    <div className="w-[475px]">
-                      <p className="bg-secondary mt-2 rounded-md p-4 opacity-90">
-                        <code className="break-words">
-                          <span>{shareCode}</span>
-                        </code>
-                      </p>
+                    <div className="w-[575px]">
+                      <div className="bg-secondary mt-2 rounded-md p-4 opacity-90">
+                        <div className="pb-2">
+                          <span className="text-primary/60 font-medium">
+                            Score:{" "}
+                          </span>
+                          <span className="text-primary/90 font-semibold">
+                            {response?.convoRating.ratingScore}
+                          </span>
+                        </div>
+
+                        <div className="pb-2">
+                          <span className="text-primary/60 font-medium">
+                            Summary:
+                          </span>
+                          <br />
+                          <span className="text-primary/90 text-sm font-semibold">
+                            {response?.convoRating.ratingSummary}
+                          </span>
+                        </div>
+
+                        <div className="pb-2">
+                          <span className="text-primary/60 font-medium">
+                            Full Analysis:
+                          </span>
+                          <br />
+                          <span className="text-primary/90 text-sm font-semibold">
+                            {response?.convoRating.ratingAnalysis}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <Button
+                    {/* <Button
                       onClick={() => {
                         copyToClipboard(shareCode)
                         toast.info("Response URL Copied!")
@@ -126,7 +151,7 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
                       className="w-full"
                     >
                       Copy Response URL
-                    </Button>
+                    </Button> */}
                   </div>
                 </DialogContent>
               </Dialog>

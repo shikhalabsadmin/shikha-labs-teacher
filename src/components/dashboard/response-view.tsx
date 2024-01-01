@@ -151,11 +151,34 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="pr-1">
-              <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
+              {/* <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
                 {responseDetails?.convoRating ? (
                   <MarkdownComponent content={responseDetails?.convoRating} />
                 ) : (
                   "The rating is not available."
+                )}
+              </div> */}
+              <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
+                {responseDetails?.convoRating.ratingAnalysis && (
+                  <>
+                    <p>
+                      <span className="font-semibold">Score: </span>
+                      {responseDetails?.convoRating?.ratingScore}
+                    </p>
+                    <br />
+                    <p>
+                      <span className="font-semibold">Summary: </span>
+                      <br />
+                      {responseDetails?.convoRating?.ratingSummary}
+                    </p>
+                    <br />
+
+                    <span className="font-semibold">Full Analysis: </span>
+
+                    <MarkdownComponent
+                      content={responseDetails?.convoRating?.ratingAnalysis}
+                    />
+                  </>
                 )}
               </div>
             </CardContent>

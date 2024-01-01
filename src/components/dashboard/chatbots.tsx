@@ -62,6 +62,7 @@ import {
 } from "@/components/ui/popover"
 import { ChatbotCard } from "@/components/dashboard/chatbot-card"
 
+import { Input } from "../ui/input"
 import { Separator } from "../ui/separator"
 
 const grades = [
@@ -87,6 +88,7 @@ const subjects = [
 ]
 
 const Chatbots = () => {
+  const [searchValue, setSearchValue] = useState<string>("")
   const [selectedGrades, setSelectedGrades] = useState<any>([])
   const [selectedSubjects, setSelectedSubjects] = useState<any>([])
 
@@ -96,15 +98,25 @@ const Chatbots = () => {
 
   const filteredChatbots = chatbots?.docs?.filter((chatbot: DocumentData) => {
     const data = chatbot.data()
+
     if (selectedGrades.length > 0 && selectedSubjects.length > 0) {
       return (
         selectedGrades.includes(data.grade) &&
-        selectedSubjects.includes(data.subject)
+        selectedSubjects.includes(data.subject) &&
+        data.chatbotName.toLowerCase().includes(searchValue.toLowerCase())
       )
     } else if (selectedGrades.length > 0) {
-      return selectedGrades.includes(data.grade)
+      return (
+        selectedGrades.includes(data.grade) &&
+        data.chatbotName.toLowerCase().includes(searchValue.toLowerCase())
+      )
     } else if (selectedSubjects.length > 0) {
-      return selectedSubjects.includes(data.subject)
+      return (
+        selectedSubjects.includes(data.subject) &&
+        data.chatbotName.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    } else if (searchValue) {
+      return data.chatbotName.toLowerCase().includes(searchValue.toLowerCase())
     }
     return true
   })
@@ -114,93 +126,105 @@ const Chatbots = () => {
       <div className="flex flex-col items-center justify-between px-2">
         <div className="self-start text-3xl font-bold">Chatbot Apps</div>
 
-        <Popover>
-          <PopoverTrigger asChild className="self-end">
-            <Button variant="outline" className="text-lg">
-              Filter
-              <Filter className="ml-2 h-5 w-5" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="mr-8 w-[30rem]">
-            <h1 className="pb-2 text-center text-xl font-bold">
-              Filter Chatbots
-            </h1>
-            <Separator />
-            <div className="inline-flex w-full justify-between p-4">
-              <div className="w-[50%] border-r">
-                <h2 className="pb-2 text-center text-lg font-medium underline">
-                  Grade
-                </h2>
-                <ul className="mr-2">
-                  {grades.map((gradeValue: string, index: number) => (
-                    <li
-                      key={index}
-                      onClick={() => {
-                        if (selectedGrades.includes(gradeValue)) {
-                          setSelectedGrades(
-                            selectedGrades.filter(
-                              (g: string) => g !== gradeValue
-                            )
-                          )
-                        } else {
-                          setSelectedGrades([...selectedGrades, gradeValue])
-                        }
-                      }}
-                      className="hover:bg-secondary flex cursor-pointer items-center justify-between rounded-md px-4 py-1"
-                    >
-                      <p>{gradeValue}</p>
-                      {selectedGrades.includes(gradeValue) && <p>✔️</p>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        <div className="self-end">
+          <div className="flex flex-row space-x-4">
+            <Input
+              type="text"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder="Search by the name of the chatbot..."
+              className="w-[25vw]"
+            />
 
-              <div className="w-[50%] pl-2">
-                <h2 className="pb-2 text-center text-lg font-medium underline">
-                  Subject
-                </h2>
-                <ul>
-                  {subjects.map((subjectValue: string, index: number) => (
-                    <li
-                      key={index}
-                      onClick={() => {
-                        if (selectedSubjects.includes(subjectValue)) {
-                          setSelectedSubjects(
-                            selectedSubjects.filter(
-                              (s: string) => s !== subjectValue
-                            )
-                          )
-                        } else {
-                          setSelectedSubjects([
-                            ...selectedSubjects,
-                            subjectValue,
-                          ])
-                        }
-                      }}
-                      className="hover:bg-secondary flex cursor-pointer items-center justify-between rounded-md px-4 py-1"
-                    >
-                      <p>{subjectValue}</p>
-                      {selectedSubjects.includes(subjectValue) && <p>✔️</p>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <Separator />
-            <div className="flex pt-2">
-              <Button
-                variant="outline"
-                className="mx-auto h-8"
-                onClick={() => {
-                  setSelectedGrades([])
-                  setSelectedSubjects([])
-                }}
-              >
-                Clear
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="text-lg">
+                  Filter
+                  <Filter className="ml-2 h-5 w-5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="mr-8 w-[30rem]">
+                <h1 className="pb-2 text-center text-xl font-bold">
+                  Filter Chatbots
+                </h1>
+                <Separator />
+                <div className="inline-flex w-full justify-between p-4">
+                  <div className="w-[50%] border-r">
+                    <h2 className="pb-2 text-center text-lg font-medium underline">
+                      Grade
+                    </h2>
+                    <ul className="mr-2">
+                      {grades.map((gradeValue: string, index: number) => (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            if (selectedGrades.includes(gradeValue)) {
+                              setSelectedGrades(
+                                selectedGrades.filter(
+                                  (g: string) => g !== gradeValue
+                                )
+                              )
+                            } else {
+                              setSelectedGrades([...selectedGrades, gradeValue])
+                            }
+                          }}
+                          className="hover:bg-secondary flex cursor-pointer items-center justify-between rounded-md px-4 py-1"
+                        >
+                          <p>{gradeValue}</p>
+                          {selectedGrades.includes(gradeValue) && <p>✔️</p>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="w-[50%] pl-2">
+                    <h2 className="pb-2 text-center text-lg font-medium underline">
+                      Subject
+                    </h2>
+                    <ul>
+                      {subjects.map((subjectValue: string, index: number) => (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            if (selectedSubjects.includes(subjectValue)) {
+                              setSelectedSubjects(
+                                selectedSubjects.filter(
+                                  (s: string) => s !== subjectValue
+                                )
+                              )
+                            } else {
+                              setSelectedSubjects([
+                                ...selectedSubjects,
+                                subjectValue,
+                              ])
+                            }
+                          }}
+                          className="hover:bg-secondary flex cursor-pointer items-center justify-between rounded-md px-4 py-1"
+                        >
+                          <p>{subjectValue}</p>
+                          {selectedSubjects.includes(subjectValue) && <p>✔️</p>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex pt-2">
+                  <Button
+                    variant="outline"
+                    className="mx-auto h-8"
+                    onClick={() => {
+                      setSelectedGrades([])
+                      setSelectedSubjects([])
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
       </div>
 
       {filteredChatbots?.length === 0 && (

@@ -1,10 +1,20 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { DocumentData } from "firebase/firestore"
+import {
+  DocumentData,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore"
 import { ExternalLink } from "lucide-react"
+import { useCollection } from "react-firebase-hooks/firestore"
 import { toast } from "sonner"
 
+import { db } from "@/config/firebase"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -14,7 +24,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { ChatbotOperations } from "@/components/dashboard/chatbot-operations"
+
+import { ScrollArea } from "../ui/scroll-area"
 
 async function copyToClipboard(value: string, meta?: Record<string, unknown>) {
   navigator.clipboard.writeText(value)
@@ -39,6 +61,25 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
     month: "short",
     day: "numeric",
   })
+
+  const [responses, setResponses] = useState<any>([])
+
+  const fetchResponses = async (chatbotid: string) => {
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "responses"),
+        where("chatbotId", "==", chatbotid),
+        orderBy("createdAt", "desc")
+      )
+    )
+    let itemsArr: { responseid: string }[] = []
+
+    querySnapshot.forEach((doc) => {
+      itemsArr.push({ ...doc.data(), responseid: doc.id })
+    })
+
+    setResponses(itemsArr)
+  }
 
   return (
     <article className="border-primary/80 flex rounded-md border-2 border-dashed">
@@ -69,6 +110,98 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
             )}
 
             <div className="mt-5 flex gap-5">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={() => {
+                      fetchResponses(id)
+                    }}
+                  >
+                    Responses
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[900px]">
+                  <DialogHeader>
+                    <DialogTitle>View Responses</DialogTitle>
+                    <DialogDescription>
+                      Here are all the responses of the students conversed with
+                      this chatbot.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  {responses.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <div className="w-[850px]">
+                          <TableRow>
+                            <TableHead className="w-[200px]">
+                              Student Name
+                            </TableHead>
+                            <TableHead className="w-[90px]">Grade</TableHead>
+                            <TableHead className="w-[60px]">Roll No.</TableHead>
+                            <TableHead className="w-[80px]">
+                              Rating Score
+                            </TableHead>
+                            <TableHead className="w-[300px]">
+                              Rating Summary
+                            </TableHead>
+                            {/* <TableHead className="text-right">View</TableHead> */}
+                          </TableRow>
+                        </div>
+                      </TableHeader>
+                      <TableBody>
+                        <ScrollArea className="max-h-[70vh] rounded-md border">
+                          {responses.map((response: any) => (
+                            <TableRow key={response.responseid}>
+                              <TableCell className="w-[200px] font-medium">
+                                {response?.studentName}
+                              </TableCell>
+                              <TableCell className="w-[90px]">
+                                {response?.studentGrade}
+                              </TableCell>
+                              <TableCell className="w-[60px]">
+                                {response?.studentRollno}
+                              </TableCell>
+                              <TableCell className="w-[80px]">
+                                {response?.convoRating.ratingScore}
+                              </TableCell>
+                              <TableCell className="w-[300px]">
+                                <span className="text-sm">
+                                  {response?.convoRating.ratingSummary.substring(
+                                    0,
+                                    90
+                                  )}
+                                </span>
+                                ...
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button asChild>
+                                  <Link
+                                    href={`/dashboard/response/${response.responseid}`}
+                                  >
+                                    View{" "}
+                                    <ExternalLink className="ml-2 h-4 w-4" />
+                                  </Link>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </ScrollArea>
+                      </TableBody>
+
+                      {/* <TableFooter>
+        <TableRow>
+          <TableCell colSpan={3}>Total</TableCell>
+          <TableCell className="text-right">$2,500.00</TableCell>
+        </TableRow>
+      </TableFooter> */}
+                    </Table>
+                  ) : (
+                    <div className="">Sorry, there are no responses yet.</div>
+                  )}
+                </DialogContent>
+              </Dialog>
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button>Share</Button>
