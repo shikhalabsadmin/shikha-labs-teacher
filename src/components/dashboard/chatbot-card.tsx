@@ -1,18 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import {
   DocumentData,
   collection,
-  getDocs,
   orderBy,
   query,
   where,
 } from "firebase/firestore"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, FileDown, Loader } from "lucide-react"
 import { useCollection } from "react-firebase-hooks/firestore"
 import { toast } from "sonner"
+import * as XLSX from "xlsx"
 
 import { db } from "@/config/firebase"
 import { Button } from "@/components/ui/button"
@@ -24,19 +23,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ChatbotOperations } from "@/components/dashboard/chatbot-operations"
-
-import { ScrollArea } from "../ui/scroll-area"
 
 async function copyToClipboard(value: string, meta?: Record<string, unknown>) {
   navigator.clipboard.writeText(value)
@@ -62,23 +57,53 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
     day: "numeric",
   })
 
-  const [responses, setResponses] = useState<any>([])
+  // const [responses, setResponses] = useState<any>([])
 
-  const fetchResponses = async (chatbotid: string) => {
-    const querySnapshot = await getDocs(
-      query(
-        collection(db, "responses"),
-        where("chatbotId", "==", chatbotid),
-        orderBy("createdAt", "desc")
-      )
+  // const fetchResponses = async (chatbotid: string) => {
+  //   const querySnapshot = await getDocs(
+  //     query(
+  //       collection(db, "responses"),
+  //       where("chatbotId", "==", chatbotid),
+  //       orderBy("createdAt", "desc")
+  //     )
+  //   )
+  //   let itemsArr: { responseid: string }[] = []
+
+  //   querySnapshot.forEach((doc) => {
+  //     itemsArr.push({ ...doc.data(), responseid: doc.id })
+  //   })
+
+  //   setResponses(itemsArr)
+  // }
+
+  const [responses, loading] = useCollection(
+    query(
+      collection(db, "responses"),
+      where("chatbotId", "==", id),
+      orderBy("createdAt", "desc")
     )
-    let itemsArr: { responseid: string }[] = []
+  )
 
-    querySnapshot.forEach((doc) => {
-      itemsArr.push({ ...doc.data(), responseid: doc.id })
-    })
+  const handleDownload = () => {
+    // Convert the table data to an Excel file
+    const excelData: any = responses?.docs.map((response: DocumentData) => ({
+      "Student Name": response.data().studentName,
+      "Student Grade": response.data().studentGrade,
+      "Student Roll No.": response.data().studentRollno,
+      "Conversation Rating Score": response.data().convoRating?.ratingScore,
+      "Conversation Rating Summary": response.data().convoRating?.ratingSummary,
+      "Conversation Full Analysis": response.data().convoRating?.ratingAnalysis,
+    }))
 
-    setResponses(itemsArr)
+    const worksheet = XLSX.utils.json_to_sheet(excelData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+
+    // Generate a unique filename
+    const fileName = `responses_${new Date().getTime()}.xlsx`
+
+    // Save the Excel file
+    XLSX.writeFile(workbook, fileName)
   }
 
   return (
@@ -112,13 +137,7 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
             <div className="mt-5 flex gap-5">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button
-                    onClick={() => {
-                      fetchResponses(id)
-                    }}
-                  >
-                    Responses
-                  </Button>
+                  <Button>Responses</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[900px]">
                   <DialogHeader>
@@ -129,55 +148,73 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
                     </DialogDescription>
                   </DialogHeader>
 
-                  {responses.length > 0 ? (
+                  {responses?.empty && (
+                    <div className="bg-accent m-4 rounded-md">
+                      <p className="my-8 text-center text-lg font-medium">
+                        You don&apos;t have any student responses yet.
+                        <br />
+                        Share the chatbot with the students.
+                      </p>
+                    </div>
+                  )}
+                  {loading && (
+                    <div className="bg-accent m-4 flex flex-col items-center justify-center space-y-4 rounded-md py-8">
+                      Fetching Responses...
+                      <br />
+                      <Loader className="h-8 w-8 animate-spin" />
+                    </div>
+                  )}
+                  {responses?.empty === false && (
                     <Table>
                       <TableHeader>
-                        <div className="w-[850px]">
-                          <TableRow>
-                            <TableHead className="w-[200px]">
-                              Student Name
-                            </TableHead>
-                            <TableHead className="w-[90px]">Grade</TableHead>
-                            <TableHead className="w-[60px]">Roll No.</TableHead>
-                            <TableHead className="w-[80px]">
-                              Rating Score
-                            </TableHead>
-                            <TableHead className="w-[300px]">
-                              Rating Summary
-                            </TableHead>
-                            {/* <TableHead className="text-right">View</TableHead> */}
-                          </TableRow>
+                        <div className="flex w-[850px] flex-row pt-3">
+                          {/* <TableRow className="hover:bg-none"> */}
+                          <TableHead className="w-[200px]">
+                            Student Name
+                          </TableHead>
+                          <TableHead className="w-[90px]">Grade</TableHead>
+                          <TableHead className="w-[60px]">Roll No.</TableHead>
+                          <TableHead className="w-[80px]">
+                            Rating Score
+                          </TableHead>
+                          <TableHead className="w-[300px]">
+                            Rating Summary
+                          </TableHead>
+                          <Button onClick={handleDownload}>
+                            Download{" "}
+                            <FileDown className="ml-2 h-[18px] w-[18px]" />
+                          </Button>
+                          {/* </TableRow> */}
                         </div>
                       </TableHeader>
                       <TableBody>
-                        <ScrollArea className="max-h-[70vh] rounded-md border">
-                          {responses.map((response: any) => (
-                            <TableRow key={response.responseid}>
-                              <TableCell className="w-[200px] font-medium">
-                                {response?.studentName}
+                        <ScrollArea className="max-h-[70vh] overflow-y-auto rounded-md border">
+                          {responses.docs.map((response: DocumentData) => (
+                            <TableRow key={response.id}>
+                              <TableCell className="w-[200px] font-semibold">
+                                {response.data().studentName}
                               </TableCell>
                               <TableCell className="w-[90px]">
-                                {response?.studentGrade}
+                                {response.data().studentGrade}
                               </TableCell>
                               <TableCell className="w-[60px]">
-                                {response?.studentRollno}
+                                {response.data().studentRollno}
                               </TableCell>
                               <TableCell className="w-[80px]">
-                                {response?.convoRating.ratingScore}
+                                {response.data().convoRating.ratingScore}
                               </TableCell>
                               <TableCell className="w-[300px]">
                                 <span className="text-sm">
-                                  {response?.convoRating.ratingSummary.substring(
-                                    0,
-                                    90
-                                  )}
+                                  {response
+                                    .data()
+                                    .convoRating.ratingSummary.substring(0, 90)}
                                 </span>
                                 ...
                               </TableCell>
                               <TableCell className="text-right">
                                 <Button asChild>
                                   <Link
-                                    href={`/dashboard/response/${response.responseid}`}
+                                    href={`/dashboard/response/${response.id}`}
                                   >
                                     View{" "}
                                     <ExternalLink className="ml-2 h-4 w-4" />
@@ -196,8 +233,6 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
         </TableRow>
       </TableFooter> */}
                     </Table>
-                  ) : (
-                    <div className="">Sorry, there are no responses yet.</div>
                   )}
                 </DialogContent>
               </Dialog>

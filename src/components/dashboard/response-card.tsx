@@ -102,7 +102,7 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
                 <DialogTrigger asChild>
                   <Button>View Rating</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[625px]">
+                <DialogContent className="sm:max-w-[725px]">
                   <DialogHeader>
                     <DialogTitle>Student Conversation Rating</DialogTitle>
                     <DialogDescription>
@@ -111,7 +111,7 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex flex-col space-y-4">
-                    <div className="w-[575px]">
+                    <div className="w-[675px]">
                       <div className="bg-secondary mt-2 rounded-md p-4 opacity-90">
                         <div className="pb-2">
                           <span className="text-primary/60 font-medium">
