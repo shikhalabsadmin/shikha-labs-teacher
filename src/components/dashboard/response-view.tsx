@@ -159,7 +159,7 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                 )}
               </div> */}
               <div className="h-[51vh] w-full overflow-y-auto pr-4 text-[15px]">
-                {responseDetails?.convoRating.ratingAnalysis && (
+                {responseDetails?.convoRating.ratingAnalysis ? (
                   <>
                     <p>
                       <span className="font-semibold">Score: </span>
@@ -179,6 +179,8 @@ export default function ResponseView({ responseid }: ResponseViewProps) {
                       content={responseDetails?.convoRating?.ratingAnalysis}
                     />
                   </>
+                ) : (
+                  "The conversation rating is not available."
                 )}
               </div>
             </CardContent>

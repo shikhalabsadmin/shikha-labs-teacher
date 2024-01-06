@@ -112,36 +112,42 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
                   </DialogHeader>
                   <div className="flex flex-col space-y-4">
                     <div className="w-[675px]">
-                      <div className="bg-secondary mt-2 rounded-md p-4 opacity-90">
-                        <div className="pb-2">
-                          <span className="text-primary/60 font-medium">
-                            Score:{" "}
-                          </span>
-                          <span className="text-primary/90 font-semibold">
-                            {response?.convoRating.ratingScore}
-                          </span>
-                        </div>
+                      {response?.convoRating?.ratingAnalysis ? (
+                        <div className="bg-secondary mt-2 rounded-md p-4 opacity-90">
+                          <div className="pb-2">
+                            <span className="text-primary/60 font-medium">
+                              Score:{" "}
+                            </span>
+                            <span className="text-primary/90 font-semibold">
+                              {response?.convoRating?.ratingScore}
+                            </span>
+                          </div>
 
-                        <div className="pb-2">
-                          <span className="text-primary/60 font-medium">
-                            Summary:
-                          </span>
-                          <br />
-                          <span className="text-primary/90 text-sm font-semibold">
-                            {response?.convoRating.ratingSummary}
-                          </span>
-                        </div>
+                          <div className="pb-2">
+                            <span className="text-primary/60 font-medium">
+                              Summary:
+                            </span>
+                            <br />
+                            <span className="text-primary/90 text-sm font-semibold">
+                              {response?.convoRating?.ratingSummary}
+                            </span>
+                          </div>
 
-                        <div className="pb-2">
-                          <span className="text-primary/60 font-medium">
-                            Full Analysis:
-                          </span>
-                          <br />
-                          <span className="text-primary/90 text-sm font-semibold">
-                            {response?.convoRating.ratingAnalysis}
-                          </span>
+                          <div className="pb-2">
+                            <span className="text-primary/60 font-medium">
+                              Full Analysis:
+                            </span>
+                            <br />
+                            <span className="text-primary/90 text-sm font-semibold">
+                              {response?.convoRating?.ratingAnalysis}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="bg-secondary mt-2 rounded-md p-4 text-center opacity-90">
+                          Sorry, the conversation rating is not available.
+                        </div>
+                      )}
                     </div>
                     {/* <Button
                       onClick={() => {

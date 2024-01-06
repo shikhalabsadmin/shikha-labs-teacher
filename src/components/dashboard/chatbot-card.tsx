@@ -90,9 +90,11 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
       "Student Name": response.data().studentName,
       "Student Grade": response.data().studentGrade,
       "Student Roll No.": response.data().studentRollno,
-      "Conversation Rating Score": response.data().convoRating?.ratingScore,
-      "Conversation Rating Summary": response.data().convoRating?.ratingSummary,
-      "Conversation Full Analysis": response.data().convoRating?.ratingAnalysis,
+      "Conversation Rating Score": response.data()?.convoRating?.ratingScore,
+      "Conversation Rating Summary":
+        response.data()?.convoRating?.ratingSummary,
+      "Conversation Full Analysis":
+        response.data()?.convoRating?.ratingAnalysis,
     }))
 
     const worksheet = XLSX.utils.json_to_sheet(excelData)
@@ -192,24 +194,32 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
                           {responses.docs.map((response: DocumentData) => (
                             <TableRow key={response.id}>
                               <TableCell className="w-[200px] font-semibold">
-                                {response.data().studentName}
+                                {response.data()?.studentName}
                               </TableCell>
                               <TableCell className="w-[90px]">
-                                {response.data().studentGrade}
+                                {response.data()?.studentGrade}
                               </TableCell>
                               <TableCell className="w-[60px]">
-                                {response.data().studentRollno}
+                                {response.data()?.studentRollno}
                               </TableCell>
                               <TableCell className="w-[80px]">
-                                {response.data().convoRating.ratingScore}
+                                {response.data()?.convoRating?.ratingScore
+                                  ? `${
+                                      response.data()?.convoRating?.ratingScore
+                                    }`
+                                  : "N/A"}
                               </TableCell>
                               <TableCell className="w-[300px]">
                                 <span className="text-sm">
-                                  {response
-                                    .data()
-                                    .convoRating.ratingSummary.substring(0, 90)}
+                                  {response.data()?.convoRating?.ratingSummary
+                                    ? `${response
+                                        .data()
+                                        ?.convoRating?.ratingSummary?.substring(
+                                          0,
+                                          90
+                                        )}...`
+                                    : "N/A"}
                                 </span>
-                                ...
                               </TableCell>
                               <TableCell className="text-right">
                                 <Button asChild>
@@ -225,13 +235,6 @@ export function ChatbotCard({ chatbot, id }: ChatbotCardProps) {
                           ))}
                         </ScrollArea>
                       </TableBody>
-
-                      {/* <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter> */}
                     </Table>
                   )}
                 </DialogContent>
