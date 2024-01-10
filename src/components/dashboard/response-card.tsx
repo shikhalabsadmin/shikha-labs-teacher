@@ -86,7 +86,7 @@ export function ResponseCard({ response, id }: ResponseCardProps) {
       <div className="flex flex-1 flex-col justify-between">
         <div className="border-primary/10 grid grid-flow-col-dense grid-cols-4 border-l p-4 pb-0 text-left sm:border-l-transparent sm:px-4 sm:py-6 sm:pb-0">
           <div className="col-span-2 pr-3">
-            <h2 className="text-xl font-bold capitalize sm:text-2xl">
+            <h2 className="text-xl font-bold sm:text-2xl">
               {response?.studentName}
             </h2>
 
